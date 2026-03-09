@@ -43,6 +43,13 @@ Frontend: `http://localhost:3000`
 - Copy `frontend/.env.local.example` to `frontend/.env.local`
 - Default logo path for certificates: `backend/assets/orbit-linker-logo.png`
 - Optional override: set `CERT_COMPANY_LOGO_PATH` in backend environment
+- Optional override: set `CERT_DATA_DIR` for where backend JSON data is stored
+
+## Vercel Backend Note
+
+- Vercel serverless code runs from `/var/task` (read-only), so runtime writes must use `/tmp`.
+- Backend now auto-uses `/tmp/certificate-data` on Vercel unless `CERT_DATA_DIR` is set.
+- `/tmp` is ephemeral; use external storage (Postgres, KV, Blob, S3, etc.) for durable data.
 
 ## API Endpoints
 
