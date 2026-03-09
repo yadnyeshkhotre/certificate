@@ -1,0 +1,14 @@
+[
+  {
+    "id": "classic",
+    "name": "Classic Completion Certificate",
+    "description": "A clean, formal template for completion certificates.",
+    "html_template": "<h1>Certificate of Completion</h1><p>This certifies {{recipient_name}} has completed {{course_name}} on {{issue_date}}.</p>"
+  },
+  {
+    "id": "modern",
+    "name": "Modern Achievement Certificate",
+    "description": "A modern style suitable for workshops and events.",
+    "html_template": "<h1>Achievement Certificate</h1><p>{{recipient_name}} is recognized for {{course_name}} dated {{issue_date}}.</p>"
+  }
+]
