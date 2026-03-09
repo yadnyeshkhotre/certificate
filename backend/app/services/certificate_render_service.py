@@ -10,28 +10,51 @@ from PIL import Image, ImageDraw, ImageFont
 from ..schemas import CertificateRecord
 
 
-def _load_font(size: int, bold: bool = False) -> ImageFont.ImageFont:
-    candidates = []
-    if bold:
-        candidates.extend(
-            [
-                'C:/Windows/Fonts/arialbd.ttf',
-                'C:/Windows/Fonts/calibrib.ttf',
-                'DejaVuSans-Bold.ttf',
-            ]
-        )
-    else:
-        candidates.extend(
-            [
-                'C:/Windows/Fonts/arial.ttf',
-                'C:/Windows/Fonts/calibri.ttf',
-                'DejaVuSans.ttf',
-            ]
-        )
+def _font_candidates(bold: bool) -> list[Path | str]:
+    backend_root = Path(__file__).resolve().parents[2]
+    pil_fonts_dir = Path(ImageFont.__file__).resolve().parent / 'fonts'
 
-    for candidate in candidates:
+    env_var = 'CERT_FONT_BOLD_PATH' if bold else 'CERT_FONT_REGULAR_PATH'
+    configured = os.getenv(env_var, '').strip()
+
+    if bold:
+        names = ['DejaVuSans-Bold.ttf', 'Arial Bold.ttf', 'LiberationSans-Bold.ttf']
+        relative = ['arialbd.ttf', 'calibrib.ttf']
+        linux = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+            '/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf',
+            '/usr/share/fonts/truetype/msttcorefonts/Arial_Bold.ttf',
+        ]
+        windows = ['C:/Windows/Fonts/arialbd.ttf', 'C:/Windows/Fonts/calibrib.ttf']
+        mac = ['/System/Library/Fonts/Supplemental/Arial Bold.ttf']
+    else:
+        names = ['DejaVuSans.ttf', 'Arial.ttf', 'LiberationSans-Regular.ttf']
+        relative = ['arial.ttf', 'calibri.ttf']
+        linux = [
+            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
+            '/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf',
+            '/usr/share/fonts/truetype/msttcorefonts/Arial.ttf',
+        ]
+        windows = ['C:/Windows/Fonts/arial.ttf', 'C:/Windows/Fonts/calibri.ttf']
+        mac = ['/System/Library/Fonts/Supplemental/Arial.ttf']
+
+    candidates: list[Path | str] = []
+    if configured:
+        candidates.append(Path(configured))
+
+    for name in names:
+        candidates.append(pil_fonts_dir / name)
+    for name in relative:
+        candidates.append(backend_root / 'assets' / 'fonts' / name)
+    candidates.extend(Path(path) for path in linux + windows + mac)
+    candidates.extend(names)
+    return candidates
+
+
+def _load_font(size: int, bold: bool = False) -> ImageFont.ImageFont:
+    for candidate in _font_candidates(bold=bold):
         try:
-            return ImageFont.truetype(candidate, size)
+            return ImageFont.truetype(str(candidate), size)
         except OSError:
             continue
 

@@ -43,6 +43,7 @@ Frontend: `http://localhost:3000`
 - Copy `frontend/.env.local.example` to `frontend/.env.local`
 - Default logo path for certificates: `backend/assets/orbit-linker-logo.png`
 - Optional override: set `CERT_COMPANY_LOGO_PATH` in backend environment
+- Optional override: set `CERT_FONT_REGULAR_PATH` and `CERT_FONT_BOLD_PATH` in backend environment
 - Optional override: set `CERT_DATA_DIR` for where backend JSON data is stored
 
 ## Vercel Backend Note
