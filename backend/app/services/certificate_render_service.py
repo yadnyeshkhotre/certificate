@@ -58,7 +58,12 @@ def _load_font(size: int, bold: bool = False) -> ImageFont.ImageFont:
         except OSError:
             continue
 
-    return ImageFont.load_default()
+    # Pillow 10.1+ supports a scalable built-in default font.
+    # This keeps typography legible even when no system fonts are available.
+    try:
+        return ImageFont.load_default(size=size)
+    except TypeError:
+        return ImageFont.load_default()
 
 
 def _draw_centered_text(
