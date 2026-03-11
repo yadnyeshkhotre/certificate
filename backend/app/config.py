@@ -1,6 +1,14 @@
-﻿import os
+import os
 from dataclasses import dataclass
 from pathlib import Path
+
+
+def _optional_env(name: str) -> str | None:
+    value = os.getenv(name)
+    if value is None:
+        return None
+    value = value.strip()
+    return value or None
 
 
 def _is_vercel_runtime() -> bool:
@@ -22,6 +30,8 @@ def _default_data_dir() -> Path:
 @dataclass(frozen=True)
 class Settings:
     data_dir: Path = _default_data_dir()
+    supabase_url: str | None = _optional_env('SUPABASE_URL')
+    supabase_service_role_key: str | None = _optional_env('SUPABASE_SERVICE_ROLE_KEY')
     frontend_verify_base_url: str = os.getenv(
         'FRONTEND_VERIFY_BASE_URL',
         'http://localhost:3000/verify?certificateId=',
